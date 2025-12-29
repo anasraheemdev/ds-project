@@ -24,8 +24,6 @@ DS Project/
 │   ├── index.html             # Main UI
 │   ├── style.css              # Styling
 │   └── script.js              # Frontend logic
-├── docs/
-│   └── viva_notes.md          # Viva preparation notes
 ├── CMakeLists.txt             # CMake build configuration
 └── README.md                  # This file
 ```

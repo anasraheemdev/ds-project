@@ -1,16 +1,56 @@
 {
   "patients": [
     {
-      "patientId": 1001,
-      "name": "Shahzad",
-      "age": 20,
+      "patientId": 1005,
+      "name": "Omar Farooq",
+      "age": 40,
+      "gender": "Male",
+      "disease": "Back Pain",
+      "contactNumber": "03003334455",
+      "appointmentDate": "2024-01-19",
+      "visitNotes": "Lower back pain"
+    },
+    {
+      "patientId": 1004,
+      "name": "Ayesha Siddiqui",
+      "age": 55,
       "gender": "Female",
-      "disease": "Helo",
-      "contactNumber": "+923445345",
-      "appointmentDate": "2025-12-28",
-      "visitNotes": "Hellos dmsdnakd"
+      "disease": "Hypertension",
+      "contactNumber": "03007778899",
+      "appointmentDate": "2024-01-18",
+      "visitNotes": "Blood pressure monitoring"
+    },
+    {
+      "patientId": 1003,
+      "name": "Muhammad Hassan",
+      "age": 28,
+      "gender": "Male",
+      "disease": "Flu",
+      "contactNumber": "03005551234",
+      "appointmentDate": "2024-01-17",
+      "visitNotes": "Seasonal flu symptoms"
+    },
+    {
+      "patientId": 1002,
+      "name": "Fatima Ali",
+      "age": 32,
+      "gender": "Female",
+      "disease": "Migraine",
+      "contactNumber": "03009876543",
+      "appointmentDate": "2024-01-16",
+      "visitNotes": "Recurring headaches"
+    },
+    {
+      "patientId": 1001,
+      "name": "Ahmed Khan",
+      "age": 45,
+      "gender": "Male",
+      "disease": "Diabetes",
+      "contactNumber": "03001234567",
+      "appointmentDate": "2024-01-15",
+      "visitNotes": "Regular checkup"
     }
   ],
-  "nextId": 1002,
-  "savedAt": "2025-12-28 20:02:35"
+  "nextId": 1006,
+  "savedAt": "2025-12-29 11:32:33"
 }

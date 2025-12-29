@@ -305,11 +305,142 @@ async function loadQueue() {
 /**
  * Render queue UI
  */
+/**
+ * Render patient table in the new layout
+ */
+function renderPatientTable(patients) {
+    const tbody = document.getElementById('patientTableBody');
+    const emptyState = document.getElementById('emptyState');
+    const dashTotal = document.getElementById('dashTotalPatients');
+
+    // Update Dashboard Stats
+    if (dashTotal) dashTotal.textContent = patients ? patients.length : 0;
+
+    if (!patients || patients.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+    }
+
+    emptyState.style.display = 'none';
+
+    tbody.innerHTML = patients.map(patient => `
+        <tr>
+            <td><span class="badgee">${patient.patientId}</span></td>
+            <td><strong>${escapeHtml(patient.name)}</strong><br><span class="text-small text-muted">${patient.age} yrs, ${escapeHtml(patient.gender)}</span></td>
+            <td>${escapeHtml(patient.contactNumber)}</td>
+            <td><span class="tag">${escapeHtml(patient.disease)}</span></td>
+            <td>${escapeHtml(patient.appointmentDate)}</td>
+            <td class="actions">
+                <button class="btn-icon" onclick="editPatient(${patient.patientId})" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                <button class="btn-icon" onclick="addToQueue(${patient.patientId})" title="Queue"><i class="fa-solid fa-clock"></i></button>
+                <button class="btn-icon text-danger" onclick="deletePatient(${patient.patientId})" title="Delete"><i class="fa-solid fa-trash"></i></button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+/**
+ * Render activities timeline with improved Cards
+ */
+function renderActivities(activities) {
+    const activityList = document.getElementById('activityList');
+    const dashList = document.getElementById('dashActivityList');
+    const activityEmpty = document.getElementById('activityEmpty');
+    const dashCount = document.getElementById('dashActivityCount');
+
+    // Update Stats
+    if (dashCount) dashCount.textContent = activities ? activities.length : 0;
+
+    if (!activities || activities.length === 0) {
+        if (activityList) activityList.innerHTML = '';
+        if (dashList) dashList.innerHTML = '<p class="text-muted">No recent activity.</p>';
+        if (activityEmpty) activityEmpty.style.display = 'block';
+        return;
+    }
+
+    if (activityEmpty) activityEmpty.style.display = 'none';
+
+    const renderItem = (act) => {
+        const iconInfo = getIconForAction(act.action);
+        return `
+            <div class="system-log-card">
+                <div class="log-icon" style="color: ${iconInfo.color}; background: ${iconInfo.bg}">
+                    ${iconInfo.icon}
+                </div>
+                <div class="log-content">
+                    <div class="log-header">
+                        <span class="log-action" style="color: ${iconInfo.color}">${act.action}</span>
+                        <span class="log-time"><i class="fa-regular fa-clock"></i> ${act.timestamp.split(' ')[1]}</span>
+                    </div>
+                    <div class="log-body">
+                        <h4>${escapeHtml(act.patientName)}</h4>
+                        <p>${act.details} <small class="text-muted">(ID: ${act.patientId})</small></p>
+                    </div>
+                </div>
+            </div>
+        `;
+    };
+
+    // Full List
+    if (activityList) activityList.innerHTML = activities.map(renderItem).join('');
+
+    // Dashboard Preview (First 4 items)
+    if (dashList) dashList.innerHTML = activities.slice(0, 4).map(act => {
+        const iconInfo = getIconForAction(act.action);
+        return `<div style="display:flex; gap:12px; margin-bottom:12px; align-items:flex-start; padding: 12px; background: white; border: 1px solid #cbd5e1; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <div style="min-width:36px;height:36px;border-radius:10px;background:${iconInfo.bg};color:${iconInfo.color};display:flex;align-items:center;justify-content:center;font-size:1rem;">${iconInfo.icon}</div>
+                    <div>
+                        <div style="font-weight:700;font-size:0.85rem; margin-bottom:2px; color:#334155;">${act.action}</div>
+                        <div style="font-size:0.85rem;font-weight:600;margin-bottom:2px;">${escapeHtml(act.patientName)}</div>
+                        <div style="font-size:0.75rem;color:#64748b;">${act.details}</div>
+                    </div>
+                 </div>`;
+    }).join('');
+}
+
+function getIconForAction(action) {
+    switch (action) {
+        case 'ADD': return { icon: '<i class="fa-solid fa-user-plus"></i>', color: '#2ecc71', bg: '#e8f8f5' };
+        case 'DELETE': return { icon: '<i class="fa-solid fa-user-xmark"></i>', color: '#e74c3c', bg: '#fdedec' };
+        case 'UPDATE': return { icon: '<i class="fa-solid fa-user-pen"></i>', color: '#f1c40f', bg: '#fef9e7' };
+        case 'QUEUE': return { icon: '<i class="fa-solid fa-person-circle-plus"></i>', color: '#9b59b6', bg: '#f4ecf7' };
+        case 'PROCESS': return { icon: '<i class="fa-solid fa-user-check"></i>', color: '#3498db', bg: '#ebf5fb' };
+        case 'LOAD': return { icon: '<i class="fa-solid fa-file-import"></i>', color: '#2ecc71', bg: '#e8f8f5' };
+        case 'SAMPLE': return { icon: '<i class="fa-solid fa-box-open"></i>', color: '#e67e22', bg: '#fdf2e9' };
+        case 'CLEAR': return { icon: '<i class="fa-solid fa-bomb"></i>', color: '#e74c3c', bg: '#fdedec' };
+        default: return { icon: '<i class="fa-solid fa-info"></i>', color: '#95a5a6', bg: '#f4f6f7' };
+    }
+}
+
+/**
+ * Render Queue with improved Cards
+ */
 function renderQueue(queue) {
     const queueList = document.getElementById('queueList');
     const queueEmpty = document.getElementById('queueEmpty');
+    const dashQueueCount = document.getElementById('dashQueueCount');
+    const queueCountBadge = document.getElementById('queueCountBadge');
 
-    if (!queue || queue.length === 0) {
+    // Update Stats
+    const count = queue ? queue.length : 0;
+    if (dashQueueCount) dashQueueCount.textContent = count;
+    if (queueCountBadge) queueCountBadge.textContent = count;
+
+    // NEXT UP VISUALIZATION
+    const nextupName = document.getElementById('nextupName');
+    const nextupId = document.getElementById('nextupId');
+    if (nextupName && nextupId) {
+        if (count > 0) {
+            nextupName.textContent = queue[0].patientName;
+            nextupId.textContent = "ID: " + queue[0].patientId;
+        } else {
+            nextupName.textContent = "Nobody Waiting";
+            nextupId.textContent = "--";
+        }
+    }
+
+    if (count === 0) {
         queueList.innerHTML = '';
         queueEmpty.style.display = 'block';
         return;
@@ -317,15 +448,17 @@ function renderQueue(queue) {
 
     queueEmpty.style.display = 'none';
     queueList.innerHTML = queue.map(item => `
-        <div class="queue-item">
-            <div class="queue-position">${item.position}</div>
-            <div class="queue-info">
-                <div class="queue-name">${escapeHtml(item.patientName)}</div>
-                <div class="queue-details">ID: ${item.patientId} | ${escapeHtml(item.appointmentTime)}</div>
+        <div class="queue-card-item">
+            <div class="q-pos">${item.position}</div>
+            <div class="q-info">
+                <h4>${escapeHtml(item.patientName)} <small style="color:var(--text-light); font-weight:400;">#${item.patientId}</small></h4>
+                <span>${escapeHtml(item.appointmentTime)}</span>
             </div>
+            <div class="q-time"><i class="fa-regular fa-clock"></i> ${item.registrationTime.split(' ')[1]}</div>
         </div>
     `).join('');
 }
+
 
 /**
  * Add patient to queue

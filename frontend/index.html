@@ -5,309 +5,411 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Management System</title>
-    <meta name="description"
-        content="Data Structures based Patient Management System demonstrating Linked List, Stack, Queue, and BST implementations">
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=6">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="header-content">
-            <div class="logo">
-                <div class="logo-icon">🏥</div>
-                <div class="logo-text">
-                    <h1>Patient Management System</h1>
-                    <span class="subtitle">Data Structures Implementation</span>
-                </div>
-            </div>
-            <div class="header-stats" id="headerStats">
-                <div class="stat-item">
-                    <span class="stat-value" id="totalPatients">0</span>
-                    <span class="stat-label">Patients</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value" id="queueCount">0</span>
-                    <span class="stat-label">In Queue</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value" id="activityCount">0</span>
-                    <span class="stat-label">Activities</span>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Left Panel: Forms -->
-        <aside class="sidebar">
-            <!-- Quick Actions -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>⚡ Quick Actions</h2>
-                    <span class="ds-badge">File Storage</span>
-                </div>
-                <div class="quick-actions">
-                    <button class="btn btn-success" onclick="loadSampleData()">
-                        📥 Load Sample Data
-                    </button>
-                    <button class="btn btn-secondary" onclick="exportData()">
-                        📤 Export Data
-                    </button>
-                    <button class="btn btn-danger" onclick="clearAllData()">
-                        🗑️ Clear All Data
-                    </button>
-                </div>
-                <div class="storage-info" id="storageInfo">
-                    <small>💾 Data auto-saved to file</small>
-                </div>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar-nav">
+            <div class="logo-area">
+                <div class="logo-icon"><i class="fa-solid fa-hospital-user"></i></div>
+                <div class="logo-text">MED<span class="highlight">STRUCT</span></div>
             </div>
 
-            <!-- Add Patient Form -->
-            <div class="card form-card">
-                <div class="card-header">
-                    <h2>➕ Add New Patient</h2>
-                    <span class="ds-badge">Linked List + BST</span>
+            <ul class="nav-links">
+                <li class="nav-item active" onclick="switchTab('dashboard')">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </li>
+                <li class="nav-item" onclick="switchTab('patients')">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Patients</span>
+                </li>
+                <li class="nav-item" onclick="switchTab('appointments')">
+                    <i class="fa-solid fa-clock"></i>
+                    <span>Queue (FIFO)</span>
+                </li>
+                <li class="nav-item" onclick="switchTab('activities')">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>History (Stack)</span>
+                </li>
+            </ul>
+
+            <div class="nav-footer">
+                <div class="status-card">
+                    <div class="status-indicator online"></div>
+                    <span>System Online</span>
                 </div>
-                <form id="addPatientForm" class="form">
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-header">
+                <div class="header-title">
+                    <h1 id="pageTitle">Dashboard</h1>
+                    <p class="subtitle">Data Structures & Algorithms Project</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary"
+                        onclick="switchTab('patients'); document.getElementById('name').focus();">
+                        <i class="fa-solid fa-plus"></i> New Patient
+                    </button>
+                    <div class="user-profile">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" alt="Admin">
+                    </div>
+                </div>
+            </header>
+
+            <!-- TAB 1: DASHBOARD -->
+            <div id="dashboard" class="tab-pane active">
+                <!-- Stats Row -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-blue"><i class="fa-solid fa-users"></i></div>
+                        <div class="stat-info">
+                            <h3>Total Patients</h3>
+                            <div class="stat-value" id="dashTotalPatients">0</div>
+                            <span class="stat-badge">Linked List</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon bg-purple"><i class="fa-solid fa-user-clock"></i></div>
+                        <div class="stat-info">
+                            <h3>Waiting Queue</h3>
+                            <div class="stat-value" id="dashQueueCount">0</div>
+                            <span class="stat-badge">FIFO Queue</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon bg-orange"><i class="fa-solid fa-list-check"></i></div>
+                        <div class="stat-info">
+                            <h3>Activities</h3>
+                            <div class="stat-value" id="dashActivityCount">0</div>
+                            <span class="stat-badge">LIFO Stack</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Content -->
+                <div class="dashboard-grid">
+                    <!-- Quick Actions -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2><i class="fa-solid fa-bolt"></i> Quick Actions</h2>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn" onclick="loadSampleData()">
+                                <i class="fa-solid fa-database"></i>
+                                <span>Load Sample Data</span>
+                            </button>
+                            <button class="action-btn" onclick="exportData()">
+                                <i class="fa-solid fa-file-export"></i>
+                                <span>Export Data</span>
+                            </button>
+                            <button class="action-btn danger" onclick="clearAllData()">
+                                <i class="fa-solid fa-trash-can"></i>
+                                <span>Reset System</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity Preview -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2><i class="fa-solid fa-history"></i> Recent Activity</h2>
+                            <button class="btn-link" onclick="switchTab('activities')">View All</button>
+                        </div>
+                        <div class="activity-list small" id="dashActivityList">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: PATIENTS -->
+            <div id="patients" class="tab-pane">
+                <div class="content-split">
+                    <!-- Register/Search Sidebar -->
+                    <div class="content-sidebar">
+
+                        <!-- Toggle Buttons -->
+                        <div class="form-toggle">
+                            <button class="toggle-btn active" onclick="showForm('add')">Register</button>
+                            <button class="toggle-btn" onclick="showForm('search')">Search</button>
+                        </div>
+
+                        <!-- Add Patient Form -->
+                        <div id="addFormContainer">
+                            <form id="addPatientForm" class="styled-form">
+                                <div class="form-group">
+                                    <label>Full Name</label>
+                                    <div class="input-with-icon">
+                                        <i class="fa-solid fa-user"></i>
+                                        <input type="text" id="name" name="name" required placeholder="Ex: John Doe">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Age</label>
+                                        <input type="number" id="age" name="age" required min="0" max="150"
+                                            placeholder="0">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Gender</label>
+                                        <select id="gender" name="gender" required>
+                                            <option value="">Select</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Disease / Condition</label>
+                                    <div class="input-with-icon">
+                                        <i class="fa-solid fa-stethoscope"></i>
+                                        <input type="text" id="disease" name="disease" required placeholder="Diagnosis">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Contact Number</label>
+                                    <div class="input-with-icon">
+                                        <i class="fa-solid fa-phone"></i>
+                                        <input type="tel" id="contactNumber" name="contactNumber" required
+                                            placeholder="Phone">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Date</label>
+                                    <input type="date" id="appointmentDate" name="appointmentDate" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Notes</label>
+                                    <textarea id="visitNotes" name="visitNotes" rows="2"
+                                        placeholder="Optional notes..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary full-width">
+                                    Add Patient
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Search Forms -->
+                        <div id="searchFormContainer" class="hidden">
+                            <div class="search-box">
+                                <label>Search by ID (BST O(log n))</label>
+                                <form id="searchPatientForm" class="flex-form">
+                                    <input type="number" id="searchId" required placeholder="Patient ID">
+                                    <button type="submit" class="btn btn-secondary"><i
+                                            class="fa-solid fa-search"></i></button>
+                                </form>
+                            </div>
+                            <div class="search-box mt-3">
+                                <label>Search by Name</label>
+                                <form id="searchByNameForm" class="flex-form">
+                                    <input type="text" id="searchName" required placeholder="Patient Name">
+                                    <button type="submit" class="btn btn-secondary"><i
+                                            class="fa-solid fa-search"></i></button>
+                                </form>
+                            </div>
+                            <div id="searchResult" class="search-result-card hidden"></div>
+                        </div>
+                    </div>
+
+                    <!-- Patient List Table -->
+                    <div class="content-table-area">
+                        <div class="table-header">
+                            <h2>All Patients</h2>
+                            <div class="table-actions">
+                                <button class="btn btn-small btn-outline" onclick="loadPatientsSorted()">
+                                    <i class="fa-solid fa-sort-numeric-down"></i> Sort by ID (BST)
+                                </button>
+                                <button class="btn btn-small btn-outline" onclick="loadPatients()">
+                                    <i class="fa-solid fa-rotate-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="modern-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Details</th>
+                                        <th>Condition</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="patientTableBody">
+                                    <!-- Rows populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="emptyState" class="empty-state">
+                            <i class="fa-solid fa-folder-open"></i>
+                            <p>No records found</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: APPOINTMENTS (QUEUE) -->
+            <div id="appointments" class="tab-pane">
+                <div class="queue-layout">
+                    <!-- Current Appointment -->
+                    <div class="queue-process-card">
+                        <div class="card-header centered">
+                            <h2>Next in Line</h2>
+                            <span class="ds-badge">Front of Queue</span>
+                        </div>
+                        <div class="current-patient" id="nextupContainer">
+                            <div class="avatar-placeholder big">?</div>
+                            <h3 id="nextupName">Nobody Waiting</h3>
+                            <p id="nextupId">--</p>
+                            <button class="btn btn-success btn-lg" onclick="processNextAppointment()">
+                                <i class="fa-solid fa-check-circle"></i> Complete Appointment
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Queue List -->
+                    <div class="queue-list-card">
+                        <div class="card-header">
+                            <h2>Waiting List</h2>
+                            <span class="count-badge" id="queueCountBadge">0</span>
+                        </div>
+                        <div class="queue-items-container" id="queueList">
+                            <!-- Queue Items -->
+                        </div>
+                        <div id="queueEmpty" class="empty-state">
+                            <i class="fa-solid fa-mug-hot"></i>
+                            <p>The waiting room is empty</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: HISTORY (STACK) -->
+            <div id="activities" class="tab-pane">
+                <div class="card full-height">
+                    <div class="card-header">
+                        <h2>System Logs</h2>
+                        <div class="header-actions">
+                            <span class="ds-badge warning">LIFO Stack</span>
+                            <button class="btn btn-small btn-danger" onclick="popActivity()">
+                                <i class="fa-solid fa-undo"></i> Undo Last
+                            </button>
+                        </div>
+                    </div>
+                    <div class="timeline-container" id="activityList">
+                        <!-- Timeline Items -->
+                    </div>
+                    <div id="activityEmpty" class="empty-state">
+                        <i class="fa-solid fa-history"></i>
+                        <p>No recent history</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Edit Patient</h3>
+                <button onclick="closeEditModal()"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="editPatientForm" class="styled-form">
+                    <input type="hidden" id="editPatientId">
                     <div class="form-group">
-                        <label for="name">Patient Name</label>
-                        <input type="text" id="name" name="name" required placeholder="Enter full name">
+                        <label>Name</label>
+                        <input type="text" id="editName" required>
                     </div>
                     <div class="form-row">
+                        <div class="form-group"><label>Age</label><input type="number" id="editAge" required></div>
                         <div class="form-group">
-                            <label for="age">Age</label>
-                            <input type="number" id="age" name="age" required min="0" max="150" placeholder="Age">
-                        </div>
-                        <div class="form-group">
-                            <label for="gender">Gender</label>
-                            <select id="gender" name="gender" required>
-                                <option value="">Select</option>
+                            <label>Gender</label>
+                            <select id="editGender" required>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
                                 <option value="Other">Other</option>
                             </select>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="disease">Disease/Condition</label>
-                        <input type="text" id="disease" name="disease" required placeholder="Primary diagnosis">
+                    <div class="form-group"><label>Condition</label><input type="text" id="editDisease" required></div>
+                    <div class="form-group"><label>Contact</label><input type="text" id="editContactNumber" required>
                     </div>
-                    <div class="form-group">
-                        <label for="contactNumber">Contact Number</label>
-                        <input type="tel" id="contactNumber" name="contactNumber" required placeholder="Phone number">
+                    <div class="form-group"><label>Date</label><input type="date" id="editAppointmentDate" required>
                     </div>
-                    <div class="form-group">
-                        <label for="appointmentDate">Appointment Date</label>
-                        <input type="date" id="appointmentDate" name="appointmentDate" required>
+                    <div class="form-group"><label>Notes</label><textarea id="editVisitNotes"></textarea></div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-ghost" onclick="closeEditModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
                     </div>
-                    <div class="form-group">
-                        <label for="visitNotes">Visit Notes</label>
-                        <textarea id="visitNotes" name="visitNotes" rows="2" placeholder="Doctor's notes"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">
-                        <span>Add Patient</span>
-                    </button>
                 </form>
             </div>
-
-            <!-- Search Patient Form -->
-            <div class="card form-card">
-                <div class="card-header">
-                    <h2>🔍 Search Patient</h2>
-                    <span class="ds-badge">BST Search O(log n)</span>
-                </div>
-                <form id="searchPatientForm" class="form">
-                    <div class="form-group">
-                        <label for="searchId">Patient ID</label>
-                        <input type="number" id="searchId" name="searchId" required placeholder="Enter patient ID">
-                    </div>
-                    <button type="submit" class="btn btn-secondary">
-                        <span>Search by ID</span>
-                    </button>
-                </form>
-                <div id="searchResult" class="search-result hidden"></div>
-            </div>
-
-            <!-- Search by Name -->
-            <div class="card form-card">
-                <div class="card-header">
-                    <h2>🔤 Search by Name</h2>
-                    <span class="ds-badge">Linked List O(n)</span>
-                </div>
-                <form id="searchByNameForm" class="form">
-                    <div class="form-group">
-                        <label for="searchName">Patient Name</label>
-                        <input type="text" id="searchName" name="searchName" required placeholder="Enter name">
-                    </div>
-                    <button type="submit" class="btn btn-secondary">
-                        <span>Search by Name</span>
-                    </button>
-                </form>
-                <div id="nameSearchResult" class="search-result hidden"></div>
-            </div>
-        </aside>
-
-        <!-- Center Panel: Patient List -->
-        <section class="center-panel">
-            <!-- Patient List -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>📋 Patient Records</h2>
-                    <div class="card-actions">
-                        <span class="ds-badge">Linked List Storage</span>
-                        <button class="btn btn-small" onclick="loadPatientsSorted()">Sort by ID (BST)</button>
-                        <button class="btn btn-small" onclick="loadPatients()">Refresh</button>
-                    </div>
-                </div>
-                <div class="table-container">
-                    <table class="data-table" id="patientTable">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Age</th>
-                                <th>Gender</th>
-                                <th>Disease</th>
-                                <th>Contact</th>
-                                <th>Appointment</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="patientTableBody">
-                            <!-- Patient rows will be inserted here -->
-                        </tbody>
-                    </table>
-                </div>
-                <div id="emptyState" class="empty-state">
-                    <span class="empty-icon">📭</span>
-                    <p>No patients registered yet</p>
-                    <span class="hint">Add a patient using the form on the left</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- Right Panel: Queue & Stack -->
-        <aside class="sidebar">
-            <!-- Appointment Queue -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>⏰ Appointment Queue</h2>
-                    <span class="ds-badge">FIFO Queue</span>
-                </div>
-                <div class="queue-actions">
-                    <button class="btn btn-success" onclick="processNextAppointment()">
-                        Process Next
-                    </button>
-                </div>
-                <div class="queue-container" id="queueContainer">
-                    <div id="queueList"></div>
-                    <div id="queueEmpty" class="empty-state-small">
-                        <span>No patients in queue</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Activity Stack -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>📜 Recent Activities</h2>
-                    <span class="ds-badge">LIFO Stack</span>
-                </div>
-                <div class="activity-container" id="activityContainer">
-                    <div id="activityList"></div>
-                    <div id="activityEmpty" class="empty-state-small">
-                        <span>No activities yet</span>
-                    </div>
-                </div>
-            </div>
-        </aside>
-    </main>
-
-    <!-- Edit Modal -->
-    <div id="editModal" class="modal hidden">
-        <div class="modal-overlay" onclick="closeEditModal()"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>✏️ Edit Patient</h2>
-                <button class="modal-close" onclick="closeEditModal()">&times;</button>
-            </div>
-            <form id="editPatientForm" class="form">
-                <input type="hidden" id="editPatientId">
-                <div class="form-group">
-                    <label for="editName">Patient Name</label>
-                    <input type="text" id="editName" required>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="editAge">Age</label>
-                        <input type="number" id="editAge" required min="0" max="150">
-                    </div>
-                    <div class="form-group">
-                        <label for="editGender">Gender</label>
-                        <select id="editGender" required>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="editDisease">Disease/Condition</label>
-                    <input type="text" id="editDisease" required>
-                </div>
-                <div class="form-group">
-                    <label for="editContactNumber">Contact Number</label>
-                    <input type="tel" id="editContactNumber" required>
-                </div>
-                <div class="form-group">
-                    <label for="editAppointmentDate">Appointment Date</label>
-                    <input type="date" id="editAppointmentDate" required>
-                </div>
-                <div class="form-group">
-                    <label for="editVisitNotes">Visit Notes</label>
-                    <textarea id="editVisitNotes" rows="2"></textarea>
-                </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-ghost" onclick="closeEditModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                </div>
-            </form>
         </div>
     </div>
 
-    <!-- Toast Notifications -->
-    <div id="toastContainer" class="toast-container"></div>
+    <div id="toastContainer"></div>
 
-    <!-- Footer with DS Info -->
-    <footer class="footer">
-        <div class="ds-info">
-            <div class="ds-card">
-                <h3>Linked List</h3>
-                <p>Patient Storage</p>
-                <span class="complexity">Insert: O(1) | Delete: O(n)</span>
-            </div>
-            <div class="ds-card">
-                <h3>Binary Search Tree</h3>
-                <p>Fast ID Search</p>
-                <span class="complexity">Search: O(log n) avg</span>
-            </div>
-            <div class="ds-card">
-                <h3>Queue (FIFO)</h3>
-                <p>Appointments</p>
-                <span class="complexity">Enqueue/Dequeue: O(1)</span>
-            </div>
-            <div class="ds-card">
-                <h3>Stack (LIFO)</h3>
-                <p>Activity History</p>
-                <span class="complexity">Push/Pop: O(1)</span>
-            </div>
-        </div>
-    </footer>
+    <script src="script.js?v=6"></script>
+    <script>
+        // Simple Tab Switching Logic (Inline for speed, moved to script.js ideally)
+        function switchTab(tabId) {
+            // Hide all tab panes
+            document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+            // Remove active class from nav items
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
-    <script src="script.js"></script>
+            // Show target
+            document.getElementById(tabId).classList.add('active');
+
+            // Highlight nav
+            const navItem = Array.from(document.querySelectorAll('.nav-item')).find(el => el.getAttribute('onclick').includes(tabId));
+            if (navItem) navItem.classList.add('active');
+
+            // Update title
+            const titles = {
+                'dashboard': 'Dashboard',
+                'patients': 'Patient Management',
+                'appointments': 'Appointment Queue',
+                'activities': 'Activity History'
+            };
+            document.getElementById('pageTitle').innerText = titles[tabId];
+
+            // Refresh data if needed
+            if (tabId === 'appointments') loadQueue();
+            if (tabId === 'activities') loadActivities();
+        }
+
+        function showForm(type) {
+            const addContainer = document.getElementById('addFormContainer');
+            const searchContainer = document.getElementById('searchFormContainer');
+            const toggles = document.querySelectorAll('.toggle-btn');
+
+            if (type === 'add') {
+                addContainer.classList.remove('hidden');
+                searchContainer.classList.add('hidden');
+                toggles[0].classList.add('active');
+                toggles[1].classList.remove('active');
+            } else {
+                addContainer.classList.add('hidden');
+                searchContainer.classList.remove('hidden');
+                toggles[0].classList.remove('active');
+                toggles[1].classList.add('active');
+            }
+        }
+    </script>
 </body>
 
 </html>
