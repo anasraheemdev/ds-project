@@ -37,17 +37,18 @@
  * - Each node uses extra memory for the 'next' pointer
  */
 
-// Node structure for the linked list
-struct PatientNode {
-    Patient data;       // Patient information
-    PatientNode* next;  // Pointer to next node
-    
-    // Constructor
-    PatientNode(const Patient& p) : data(p), next(nullptr) {}
-};
-
 class PatientLinkedList {
 private:
+    // Inner class for the linked list node
+    class PatientNode {
+    public:
+        Patient data;       // Patient information
+        PatientNode* next;  // Pointer to next node
+        
+        // Constructor
+        PatientNode(const Patient& p) : data(p), next(nullptr) {}
+    };
+
     PatientNode* head;  // Pointer to first node
     int size;           // Track number of patients
 
@@ -99,7 +100,7 @@ public:
         if (head == nullptr) return false;
 
         // Special case: deleting head
-        if (head->data.patientId == patientId) {
+        if (head->data.getPatientId() == patientId) {
             PatientNode* toDelete = head;
             head = head->next;
             delete toDelete;
@@ -110,7 +111,7 @@ public:
         // Search for patient
         PatientNode* current = head;
         while (current->next != nullptr) {
-            if (current->next->data.patientId == patientId) {
+            if (current->next->data.getPatientId() == patientId) {
                 PatientNode* toDelete = current->next;
                 current->next = current->next->next;
                 delete toDelete;
@@ -134,15 +135,15 @@ public:
     bool updatePatient(int patientId, const Patient& updatedPatient) {
         PatientNode* current = head;
         while (current != nullptr) {
-            if (current->data.patientId == patientId) {
+            if (current->data.getPatientId() == patientId) {
                 // Keep the same ID, update other fields
-                current->data.name = updatedPatient.name;
-                current->data.age = updatedPatient.age;
-                current->data.gender = updatedPatient.gender;
-                current->data.disease = updatedPatient.disease;
-                current->data.contactNumber = updatedPatient.contactNumber;
-                current->data.appointmentDate = updatedPatient.appointmentDate;
-                current->data.visitNotes = updatedPatient.visitNotes;
+                current->data.setName(updatedPatient.getName());
+                current->data.setAge(updatedPatient.getAge());
+                current->data.setGender(updatedPatient.getGender());
+                current->data.setDisease(updatedPatient.getDisease());
+                current->data.setContactNumber(updatedPatient.getContactNumber());
+                current->data.setAppointmentDate(updatedPatient.getAppointmentDate());
+                current->data.setVisitNotes(updatedPatient.getVisitNotes());
                 return true;
             }
             current = current->next;
@@ -161,7 +162,7 @@ public:
     Patient* getPatientById(int patientId) {
         PatientNode* current = head;
         while (current != nullptr) {
-            if (current->data.patientId == patientId) {
+            if (current->data.getPatientId() == patientId) {
                 return &(current->data);
             }
             current = current->next;
@@ -209,7 +210,7 @@ public:
     bool exists(int patientId) const {
         PatientNode* current = head;
         while (current != nullptr) {
-            if (current->data.patientId == patientId) {
+            if (current->data.getPatientId() == patientId) {
                 return true;
             }
             current = current->next;

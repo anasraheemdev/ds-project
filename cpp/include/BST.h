@@ -50,19 +50,24 @@
  * - Recursive operations use O(h) stack space where h = tree height
  */
 
-// BST Node structure
-struct BSTNode {
-    int patientId;      // Key for BST ordering
-    Patient* patient;   // Pointer to patient data (stored in linked list)
-    BSTNode* left;      // Left child (smaller IDs)
-    BSTNode* right;     // Right child (larger IDs)
-
-    BSTNode(int id, Patient* p) 
-        : patientId(id), patient(p), left(nullptr), right(nullptr) {}
-};
-
 class PatientBST {
 private:
+    /**
+     * BST Node Implementation
+     * -----------------------
+     * Encapsulated as a private inner struct/class.
+     * Hidden from the outside world, accessible only by PatientBST.
+     */
+    struct BSTNode {
+        int patientId;      // Key for BST ordering
+        Patient* patient;   // Pointer to patient data (stored in linked list)
+        BSTNode* left;      // Left child (smaller IDs)
+        BSTNode* right;     // Right child (larger IDs)
+
+        BSTNode(int id, Patient* p) 
+            : patientId(id), patient(p), left(nullptr), right(nullptr) {}
+    };
+
     BSTNode* root;  // Root of the BST
     int size;       // Number of nodes
 

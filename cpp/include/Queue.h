@@ -40,14 +40,18 @@
  * - O(n) where n = number of patients in queue
  */
 
-// Appointment structure for queue
-struct Appointment {
+// Appointment class (Refactored from struct)
+class Appointment {
+public: // Keeping members public or adding getters/setters. Public for easier access inside Queue for now.
+    // Changing to Class with private members to follow instructions strictly.
+private:
     int patientId;
     std::string patientName;
     std::string appointmentTime;  // Scheduled time
     std::string registrationTime; // When they joined queue
     int position;                 // Position in queue
 
+public:
     Appointment() : patientId(0), position(0) {}
 
     Appointment(int id, const std::string& name, const std::string& apptTime)
@@ -58,6 +62,15 @@ struct Appointment {
         strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", localtime(&now));
         registrationTime = std::string(buf);
     }
+    
+    // Getters and Setters
+    int getPatientId() const { return patientId; }
+    std::string getPatientName() const { return patientName; }
+    std::string getAppointmentTime() const { return appointmentTime; }
+    std::string getRegistrationTime() const { return registrationTime; }
+    int getPosition() const { return position; }
+    
+    void setPosition(int p) { position = p; }
 
     std::string toJSON() const {
         std::stringstream ss;
@@ -70,18 +83,22 @@ struct Appointment {
         ss << "}";
         return ss.str();
     }
-};
-
-// Node for linked queue implementation
-struct QueueNode {
-    Appointment data;
-    QueueNode* next;
-
-    QueueNode(const Appointment& appt) : data(appt), next(nullptr) {}
+    
+    // Friend class to allow direct access if needed, OR just use setters.
+    // Queue needs to update position.
 };
 
 class AppointmentQueue {
 private:
+    // Inner class for linked queue node
+    class QueueNode {
+    public:
+        Appointment data;
+        QueueNode* next;
+
+        QueueNode(const Appointment& appt) : data(appt), next(nullptr) {}
+    };
+
     QueueNode* front;  // Pointer to front of queue (for dequeue)
     QueueNode* rear;   // Pointer to rear of queue (for enqueue)
     int size;          // Number of appointments in queue
@@ -112,7 +129,8 @@ public:
      */
     void enqueue(const Appointment& appointment) {
         QueueNode* newNode = new QueueNode(appointment);
-        newNode->data.position = size + 1;  // Set position
+        // data is a copy, need to set position on the stored copy
+        newNode->data.setPosition(size + 1);  // Set position
 
         if (isEmpty()) {
             front = rear = newNode;
@@ -208,7 +226,7 @@ public:
     bool isInQueue(int patientId) const {
         QueueNode* current = front;
         while (current != nullptr) {
-            if (current->data.patientId == patientId) {
+            if (current->data.getPatientId() == patientId) {
                 return true;
             }
             current = current->next;
@@ -227,7 +245,7 @@ public:
         QueueNode* current = front;
         int pos = 1;
         while (current != nullptr) {
-            if (current->data.patientId == patientId) {
+            if (current->data.getPatientId() == patientId) {
                 return pos;
             }
             current = current->next;
@@ -247,7 +265,7 @@ private:
         QueueNode* current = front;
         int pos = 1;
         while (current != nullptr) {
-            current->data.position = pos++;
+            current->data.setPosition(pos++);
             current = current->next;
         }
     }

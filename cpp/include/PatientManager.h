@@ -126,7 +126,7 @@ public:
         }
         
         // Log activity
-        Activity activity("VIEW", patientId, patient->name, "Patient record viewed");
+        Activity activity("VIEW", patientId, patient->getName(), "Patient record viewed");
         activityStack.push(activity);
         
         std::stringstream ss;
@@ -147,7 +147,7 @@ public:
             return "{\"success\":false,\"message\":\"Patient not found\"}";
         }
         
-        std::string patientName = patient->name;
+        std::string patientName = patient->getName();
         
         // Remove from BST first
         patientIndex.remove(patientId);
@@ -233,11 +233,11 @@ public:
         }
         
         // Add to queue
-        Appointment appt(patientId, patient->name, patient->appointmentDate);
+        Appointment appt(patientId, patient->getName(), patient->getAppointmentDate());
         appointmentQueue.enqueue(appt);
         
         // Log activity
-        Activity activity("QUEUE", patientId, patient->name, "Added to appointment queue");
+        Activity activity("QUEUE", patientId, patient->getName(), "Added to appointment queue");
         activityStack.push(activity);
         
         std::stringstream ss;
@@ -258,7 +258,7 @@ public:
         Appointment appt = appointmentQueue.dequeue();
         
         // Log activity
-        Activity activity("PROCESS", appt.patientId, appt.patientName, 
+        Activity activity("PROCESS", appt.getPatientId(), appt.getPatientName(), 
                           "Appointment processed");
         activityStack.push(activity);
         

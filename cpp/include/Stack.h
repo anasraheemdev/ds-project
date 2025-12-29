@@ -39,14 +39,16 @@
  * - O(n) where n = number of activities stored
  */
 
-// Activity record structure
-struct Activity {
+// Activity class (Refactored from struct)
+class Activity {
+private:
     std::string action;      // Action type: "ADD", "DELETE", "UPDATE", "VIEW", "QUEUE"
     int patientId;           // Related patient ID
     std::string patientName; // Patient name for display
     std::string timestamp;   // When the action occurred
     std::string details;     // Additional details
 
+public:
     Activity() : patientId(0) {}
 
     Activity(const std::string& act, int id, const std::string& name, 
@@ -70,18 +72,21 @@ struct Activity {
         ss << "}";
         return ss.str();
     }
-};
-
-// Node for linked stack implementation
-struct ActivityNode {
-    Activity data;
-    ActivityNode* next;
-
-    ActivityNode(const Activity& act) : data(act), next(nullptr) {}
+    
+    // Getters if needed in future, currently toJSON is primary access
 };
 
 class ActivityStack {
 private:
+    // Inner class for stack node
+    class ActivityNode {
+    public:
+        Activity data;
+        ActivityNode* next;
+
+        ActivityNode(const Activity& act) : data(act), next(nullptr) {}
+    };
+
     ActivityNode* top;  // Pointer to top of stack
     int size;           // Number of activities
     int maxSize;        // Maximum activities to keep (to prevent memory issues)

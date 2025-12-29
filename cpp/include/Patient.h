@@ -5,26 +5,18 @@
 #include <sstream>
 
 /**
- * Patient Structure
- * -----------------
+ * Patient Class
+ * -------------
  * Represents a single patient record with all required medical information.
  * 
- * Why a struct?
- * - Simple data container with public access
- * - Easy to serialize to JSON for frontend communication
- * - Efficient memory layout for linked list storage
- * 
- * Fields:
- * - patientId: Unique identifier (used as BST key)
- * - name: Patient's full name
- * - age: Patient's age in years
- * - gender: Patient's gender
- * - disease: Primary diagnosis/condition
- * - contactNumber: Phone number for communication
- * - appointmentDate: Scheduled appointment date
- * - visitNotes: Doctor's notes from visits
+ * Why a Class (OOP)?
+ * - Encapsulation: Data fields are private, accessed only via public methods
+ * - Data Protection: Prevents invalid modifications to internal state
+ * - Abstraction: Hides internal implementation details
+ * - Interface: Provides a clear contract (methods) for interacting with the object
  */
-struct Patient {
+class Patient {
+private:
     int patientId;
     std::string name;
     int age;
@@ -34,6 +26,7 @@ struct Patient {
     std::string appointmentDate;
     std::string visitNotes;
 
+public:
     // Default constructor
     Patient() : patientId(0), age(0) {}
 
@@ -43,6 +36,31 @@ struct Patient {
             const std::string& appt, const std::string& notes)
         : patientId(id), name(n), age(a), gender(g),
           disease(d), contactNumber(c), appointmentDate(appt), visitNotes(notes) {}
+
+    // Getters and Setters
+    int getPatientId() const { return patientId; }
+    void setPatientId(int id) { patientId = id; }
+
+    std::string getName() const { return name; }
+    void setName(const std::string& n) { name = n; }
+
+    int getAge() const { return age; }
+    void setAge(int a) { age = a; }
+
+    std::string getGender() const { return gender; }
+    void setGender(const std::string& g) { gender = g; }
+
+    std::string getDisease() const { return disease; }
+    void setDisease(const std::string& d) { disease = d; }
+
+    std::string getContactNumber() const { return contactNumber; }
+    void setContactNumber(const std::string& c) { contactNumber = c; }
+
+    std::string getAppointmentDate() const { return appointmentDate; }
+    void setAppointmentDate(const std::string& appt) { appointmentDate = appt; }
+
+    std::string getVisitNotes() const { return visitNotes; }
+    void setVisitNotes(const std::string& notes) { visitNotes = notes; }
 
     /**
      * Convert patient to JSON string format
@@ -68,6 +86,7 @@ struct Patient {
 
 private:
     // Helper function to escape special characters in JSON strings
+    // Kept private as it is a utility for internal use only
     static std::string escapeJSON(const std::string& str) {
         std::string result;
         for (char c : str) {
